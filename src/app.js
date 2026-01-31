@@ -1,7 +1,6 @@
 const connectDB = require("./config/database");
-const dotenv = require("dotenv"); // top of app.js
+const dotenv = require("dotenv").config(); // top of app.js
 const express = require("express");
-dotenv.config();
 const app = express(); // craete server
 const cors=require("cors")
 let UserModel = require("../src/models/user.js");
@@ -33,13 +32,12 @@ const { Authicatemiddleware } = require("./middleware/auth");
 // pass the Dynmaic Data and pass into Datbase
 
 app.use(cors({
- origin:"http://localhost:5173",// use For Testing
-  // origin:"*", 
+ origin:"http://localhost:5173",
+  // origin:"*", // use For Testing
   credentials:true 
 }))
 app.use(express.json());
 app.use(cokkiesparser());
-
 
 // 1. In Postaman in body in raw i n json pass craete the data
 
@@ -267,6 +265,6 @@ app.use("/",UserRounter)
 
 connectDB();
  
-app.listen(2010, () => {
+app.listen(process.env.PORT, () => {
   console.log("Sever is Sucesfully listing on port 2010");
 }); //listent the resqiests

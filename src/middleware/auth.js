@@ -10,7 +10,7 @@ let Authicatemiddleware = async (req, res, next) => {
     return res.status(401).send("Please Login!!!!!")
     }
 
-    let encodedObj = await jwt.verify(token, "DEVTINDER@23304");
+    let encodedObj = await jwt.verify(token, process.env.JWT_PASS);
 
     let { _id } = encodedObj;
 

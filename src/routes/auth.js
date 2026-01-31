@@ -1,5 +1,4 @@
 const express = require("express");
-
 let bcrypt = require("bcrypt");
 let UserModel = require("../models/user.js");
 let { ValidatorFn } = require("../utils/validation.js");
@@ -11,7 +10,7 @@ authRouter.post("/signup", async (req, res) => {
     ValidatorFn(req);
 
     // Extrating the body
-    let { firstName, lastName, password, emailId, age,gender ,photoURL } = req.body;
+    let { firstName, lastName, password, emailId, age, gender, photoURL } = req.body;
 
     // install the bcrypt pack eof the incrept the password
     let HashPassword = await bcrypt.hash(password, 10);
@@ -27,8 +26,14 @@ authRouter.post("/signup", async (req, res) => {
       photoURL
     });
 
-    await UserObj.save(); // UserObject will save to Databse
-    res.send("User Added Sucsflluy!");
+    let savedUser = await UserObj.save(); // UserObject will save to Databse
+    let token = await savedUser.getJWT();
+
+    // 4️⃣ Store JWT in cookie (STRING only)
+    res.cookie("token", token, { expires: new Date(Date.now() + 8 * 3600000) });
+
+    res.json({ message: "User Added Sucsflluy!", data: savedUser });
+
   } catch (error) {
     res.status(400).send({ Error: error.message });
   }
@@ -62,14 +67,11 @@ authRouter.post("/login", async (req, res) => {
     res.cookie("token", token, { expires: new Date(Date.now() + 8 * 3600000) });
 
     // 5️⃣ Send response (DO NOT send res.cookie return)
-    await user.save()
     res.send(user);
   } catch (err) {
     res.status(500).send(err.message);
   }
 });
-
-
 // logout
 authRouter.post("/logout", (req, res) => {
   res

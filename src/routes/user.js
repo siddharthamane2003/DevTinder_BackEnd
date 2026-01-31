@@ -12,7 +12,7 @@ UserRounter.get("/get/rquests/revieced", Authicatemiddleware, async (req, res) =
         let ConnectionRequestMo = await ConnectionRequestModel.find({
             toUserId: loggedUser._id,
             status: "Interested"
-        }).populate("fromUserId", ["firstName", "lastName"])
+        }).populate("fromUserId", ["firstName", "lastName" , "photoURL" ,"about", "skills"])
 
         let data = await ConnectionRequestMo
         await loggedUser.save()
@@ -35,8 +35,8 @@ UserRounter.get("/user/connections", Authicatemiddleware, async (req, res) => {
                 { fromUserId: loggedUser._id, status: "Accept", },
                 { toUserId: loggedUser._id, status: "Accept", }
             ]
-        }).populate('fromUserId', 'firstName lastName')
-          .populate('toUserId', 'firstName lastName');
+        }).populate('fromUserId', 'firstName lastName age  gender photoURL about')
+          .populate('toUserId', 'firstName lastName age gender photoURL about');
 
         // let data = connections.map(row => row.fromUserId)
         // res.send(data);
@@ -47,6 +47,7 @@ UserRounter.get("/user/connections", Authicatemiddleware, async (req, res) => {
             }
             return row.fromUserId;
         })
+
        await loggedUser.save()
         res.send(data)
 
